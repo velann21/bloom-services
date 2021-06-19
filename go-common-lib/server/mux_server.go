@@ -38,4 +38,17 @@ func Server(ctx context.Context, router *mux.Router){
 	return
 }
 
+func NewMux()*mux.Router{
+	r := mux.NewRouter().StrictSlash(false)
+	return r
+}
+
+type Router struct {
+	Router *mux.Router
+}
+
+func NewRouter(routes *mux.Router)*Router{
+	return &Router{Router: routes}
+}
+
 
