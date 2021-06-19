@@ -2,16 +2,16 @@ package requests
 
 import (
 	"encoding/json"
-	"github.com/velann21/bloom-users-service/pkg/helpers"
+	"github.com/velann21/bloom-services/common-lib/helpers"
 	"io"
 	"time"
 )
 
 type User struct {
-	Name         string        `json:"name"`
-    MobileNumber string        `json:"mobile_number"`
-	Address      Address       `json:"address"`
-	DOB          DOB           `json:"dob"`
+	Name         string  `json:"name"`
+    MobileNumber string  `json:"mobile_number"`
+	Address      Address `json:"address"`
+	DOB          DOB     `json:"dob"`
 }
 
 type DOB struct {
@@ -26,7 +26,7 @@ type Address struct {
 	HouseNumber int `json:"house_number"`
 }
 
-func NewUserEntity()*User{
+func NewUserEntity()*User {
 	return &User{}
 }
 

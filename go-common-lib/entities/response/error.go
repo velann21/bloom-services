@@ -3,7 +3,7 @@ package response
 import (
 	"encoding/json"
 	"github.com/sirupsen/logrus"
-	"github.com/velann21/bloom-users-service/pkg/helpers"
+	"github.com/velann21/bloom-services/common-lib/helpers"
 	"net/http"
 )
 

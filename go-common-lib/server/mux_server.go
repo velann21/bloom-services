@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"context"
@@ -37,4 +37,5 @@ func Server(ctx context.Context, router *mux.Router){
 	logrus.Info("server exited properly")
 	return
 }
+
 

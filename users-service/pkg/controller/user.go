@@ -2,9 +2,9 @@ package controller
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/velann21/bloom-users-service/pkg/entities/requests"
-	"github.com/velann21/bloom-users-service/pkg/entities/response"
-	"github.com/velann21/bloom-users-service/pkg/service"
+	"github.com/velann21/bloom-services/users-service/pkg/entities/requests"
+	"github.com/velann21/bloom-services/users-service/pkg/entities/response"
+	"github.com/velann21/bloom-services/users-service/pkg/service"
 	"net/http"
 )
 
