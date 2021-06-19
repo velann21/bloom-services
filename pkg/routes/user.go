@@ -5,5 +5,5 @@ import (
 )
 
 func Routes(router *mux.Router){
-	router.Path("/user").HandlerFunc(controller.CreateTodo).Methods("POST")
+	router.Path("/user").HandlerFunc(nil).Methods("POST")
 }
