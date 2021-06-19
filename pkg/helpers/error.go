@@ -14,3 +14,4 @@ var (
 	Roles_notFound      = errors.New("User creation failed")
 	SQLRowNotFound      = "sql: no rows in result set"
 )
+
