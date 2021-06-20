@@ -15,6 +15,8 @@ import (
 type UserInterface interface {
 	CreateUser(ctx context.Context, data *requests.User)error
 	GetUser(ctx context.Context, email string)(*models.User, error)
+	UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User)error
+	UpdateUserPessimisticLock(ctx context.Context, email string, data *requests.User)
 }
 
 type UserService struct {
@@ -29,7 +31,7 @@ func (users UserService) CreateUser(ctx context.Context, data *requests.User)err
 	result, err := users.userRepo.GetUser(ctx, data.Email)
 	if err != nil{
 		fmt.Println(err.Error())
-		if err.Error() == "redis: nil"{
+		if err.Error() == helpers.RedisNil{
 			goto createUser
 		}
 		return err
@@ -70,13 +72,45 @@ func (users UserService) GetUser(ctx context.Context, email string)(*models.User
 		return nil, err
 	}
 	if result == nil{
-		return nil, helpers.NoresultFound
+		return nil, helpers.NoResultFound
 	}
 	userModel := &models.User{}
 	err = userModel.PopulateUser(result)
-	if err != nil {
+	if err != nil{
 		return nil, err
 	}
+	fmt.Println(userModel)
 	return userModel, nil
 }
 
+func (users UserService) UpdateUserPessimisticLock(ctx context.Context, email string, data *requests.User){
+
+}
+
+func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User)error{
+	user, err := users.GetUser(ctx, data.Email)
+	if err != nil{
+		return err
+	}
+	userModel := &models.User{}
+	userModel.Email = data.Email
+	userModel.Name = data.Name
+	userModel.Address.ZipCode = data.Address.ZipCode
+	userModel.Address.StreetName = data.Address.StreetName
+	userModel.Address.HouseNumber = data.Address.HouseNumber
+	userModel.DOB.Month = data.DOB.Month
+	userModel.DOB.Year = data.DOB.Year
+	userModel.DOB.Day = data.DOB.Day
+	userModel.CreatedAt = user.CreatedAt
+	userModel.UpdatedAt = time.Now()
+	reqBodyBytes := new(bytes.Buffer)
+	err = gob.NewEncoder(reqBodyBytes).Encode(userModel)
+	if err != nil{
+		return err
+	}
+	err = users.userRepo.UpdateUserWithOptimisticLocking(ctx, data.Email, reqBodyBytes.Bytes())
+	if err != nil{
+		return err
+	}
+	return nil
+}

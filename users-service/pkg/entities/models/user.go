@@ -1,8 +1,8 @@
 package models
 
 import (
-	"encoding/json"
-	"fmt"
+	"bytes"
+	"encoding/gob"
 	"time"
 )
 
@@ -27,10 +27,10 @@ type Address struct {
 	HouseNumber int `json:"house_number"`
 }
 
-func (user *User) PopulateUser(body []byte) error {
-	fmt.Println(string(body))
-	err := json.Unmarshal(body, user)
-	if err != nil {
+func (user *User) PopulateUser(result []byte) error {
+	ioReader := bytes.NewReader(result)
+	err := gob.NewDecoder(ioReader).Decode(user)
+	if err != nil{
 		return err
 	}
 	return nil
