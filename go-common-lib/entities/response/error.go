@@ -55,7 +55,7 @@ func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
 		}
 		w.WriteHeader(500)
 		_ = json.NewEncoder(w).Encode(resp)
-	case helpers.NoresultFound:
+	case helpers.NoResultFound:
 		errObj := Error{
 			Message:   er.Error(),
 			ErrorCode: 2,
