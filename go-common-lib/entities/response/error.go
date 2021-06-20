@@ -8,8 +8,8 @@ import (
 )
 
 type ErrorResponse struct {
-	Success bool
-	Errors  []Error
+	Success bool `json:"success"`
+	Errors  []Error `json:"errors"`
 }
 
 func NewErrorResponse() *ErrorResponse {
@@ -17,8 +17,8 @@ func NewErrorResponse() *ErrorResponse {
 }
 
 type Error struct {
-	Message   string
-	ErrorCode int
+	Message   string `json:"message"`
+	ErrorCode int `json:"error_code"`
 }
 
 func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
@@ -27,6 +27,7 @@ func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
 		return
 	}
 	errList := make([]Error, 0)
+	w.Header().Set("Content-Type", "application/json")
 	switch er {
 	case helpers.InvalidRequest:
 		errObj := Error{
@@ -39,13 +40,13 @@ func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
 			Errors:  errList,
 		}
 		w.WriteHeader(400)
-		w.Header().Set("Content-Type", "application/json")
+
 		_ = json.NewEncoder(w).Encode(resp)
 
 	case helpers.SomethingWrong:
 		errObj := Error{
 			Message:   er.Error(),
-			ErrorCode: 1,
+			ErrorCode: 0,
 		}
 		errList = append(errList, errObj)
 		resp := ErrorResponse{
@@ -53,12 +54,23 @@ func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
 			Errors:  errList,
 		}
 		w.WriteHeader(500)
-		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(resp)
+	case helpers.NoresultFound:
+		errObj := Error{
+			Message:   er.Error(),
+			ErrorCode: 2,
+		}
+		errList = append(errList, errObj)
+		resp := ErrorResponse{
+			Success: false,
+			Errors:  errList,
+		}
+		w.WriteHeader(404)
 		_ = json.NewEncoder(w).Encode(resp)
 	default:
 		errObj := Error{
 			Message:   er.Error(),
-			ErrorCode: 1,
+			ErrorCode: 0,
 		}
 		errList = append(errList, errObj)
 		resp := ErrorResponse{
@@ -66,7 +78,6 @@ func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
 			Errors:  errList,
 		}
 		w.WriteHeader(500)
-		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp)
 	}
 

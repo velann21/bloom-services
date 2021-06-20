@@ -9,7 +9,7 @@ import (
 
 type User struct {
 	Name         string  `json:"name"`
-    MobileNumber string  `json:"mobile_number"`
+	Email        string  `json:"email"`
 	Address      Address `json:"address"`
 	DOB          DOB     `json:"dob"`
 }
@@ -43,9 +43,6 @@ func (user *User) ValidateUser() error {
 	if user.Address.ZipCode == ""{
 		return helpers.InvalidRequest
 	}
-	if user.MobileNumber == ""{
-		return helpers.InvalidRequest
-	}
 	if user.DOB.Day <= 0 || user.DOB.Day >= 31{
 		return helpers.InvalidRequest
 	}
@@ -60,7 +57,7 @@ func (user *User) ValidateUser() error {
 
 func (user *User) PopulateUser(body io.Reader) error {
 	decode := json.NewDecoder(body)
-	err := decode.Decode(&user)
+	err := decode.Decode(user)
 	if err != nil {
 		return helpers.InvalidRequest
 	}

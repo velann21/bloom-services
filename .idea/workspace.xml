@@ -116,30 +116,57 @@
       <screen x="0" y="23" width="1792" height="1026" />
     </state>
     <state x="584" y="278" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/1792.23.2560.1417/0.23.1792.1026@0.23.1792.1026" timestamp="1624106800050" />
-    <state width="1356" height="194" key="GridCell.Tab.0.bottom" timestamp="1624121530503">
+    <state width="1356" height="241" key="GridCell.Tab.0.bottom" timestamp="1624123916582">
       <screen x="0" y="23" width="1792" height="1028" />
     </state>
     <state width="1356" height="194" key="GridCell.Tab.0.bottom/1792.23.2560.1417/0.23.1792.1026@0.23.1792.1026" timestamp="1624111553930" />
-    <state width="1356" height="194" key="GridCell.Tab.0.bottom/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624121530503" />
-    <state width="1356" height="194" key="GridCell.Tab.0.center" timestamp="1624121530503">
+    <state width="1356" height="241" key="GridCell.Tab.0.bottom/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916582" />
+    <state width="1356" height="241" key="GridCell.Tab.0.center" timestamp="1624123916581">
       <screen x="0" y="23" width="1792" height="1028" />
     </state>
     <state width="1356" height="194" key="GridCell.Tab.0.center/1792.23.2560.1417/0.23.1792.1026@0.23.1792.1026" timestamp="1624111553929" />
-    <state width="1356" height="194" key="GridCell.Tab.0.center/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624121530503" />
-    <state width="1356" height="194" key="GridCell.Tab.0.left" timestamp="1624121530503">
+    <state width="1356" height="241" key="GridCell.Tab.0.center/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916581" />
+    <state width="1356" height="241" key="GridCell.Tab.0.left" timestamp="1624123916580">
       <screen x="0" y="23" width="1792" height="1028" />
     </state>
     <state width="1356" height="194" key="GridCell.Tab.0.left/1792.23.2560.1417/0.23.1792.1026@0.23.1792.1026" timestamp="1624111553928" />
-    <state width="1356" height="194" key="GridCell.Tab.0.left/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624121530503" />
-    <state width="1356" height="194" key="GridCell.Tab.0.right" timestamp="1624121530503">
+    <state width="1356" height="241" key="GridCell.Tab.0.left/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916580" />
+    <state width="1356" height="241" key="GridCell.Tab.0.right" timestamp="1624123916581">
       <screen x="0" y="23" width="1792" height="1028" />
     </state>
     <state width="1356" height="194" key="GridCell.Tab.0.right/1792.23.2560.1417/0.23.1792.1026@0.23.1792.1026" timestamp="1624111553930" />
-    <state width="1356" height="194" key="GridCell.Tab.0.right/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624121530503" />
+    <state width="1356" height="241" key="GridCell.Tab.0.right/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916581" />
+    <state width="1356" height="241" key="GridCell.Tab.1.bottom" timestamp="1624123916583">
+      <screen x="0" y="23" width="1792" height="1028" />
+    </state>
+    <state width="1356" height="241" key="GridCell.Tab.1.bottom/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916583" />
+    <state width="1356" height="241" key="GridCell.Tab.1.center" timestamp="1624123916582">
+      <screen x="0" y="23" width="1792" height="1028" />
+    </state>
+    <state width="1356" height="241" key="GridCell.Tab.1.center/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916582" />
+    <state width="1356" height="241" key="GridCell.Tab.1.left" timestamp="1624123916582">
+      <screen x="0" y="23" width="1792" height="1028" />
+    </state>
+    <state width="1356" height="241" key="GridCell.Tab.1.left/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916582" />
+    <state width="1356" height="241" key="GridCell.Tab.1.right" timestamp="1624123916582">
+      <screen x="0" y="23" width="1792" height="1028" />
+    </state>
+    <state width="1356" height="241" key="GridCell.Tab.1.right/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624123916582" />
     <state x="497" y="186" key="SettingsEditor" timestamp="1624111464724">
       <screen x="0" y="23" width="1792" height="1026" />
     </state>
     <state x="497" y="186" key="SettingsEditor/1792.23.2560.1417/0.23.1792.1026@0.23.1792.1026" timestamp="1624111464724" />
     <state x="497" y="186" key="SettingsEditor/1792.23.2560.1417/0.23.1792.1028@0.23.1792.1028" timestamp="1624107138350" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../bloom-services/users-service/main.go</url>
+          <line>13</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

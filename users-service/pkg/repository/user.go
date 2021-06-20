@@ -1,15 +1,41 @@
 package repository
 
 import (
-	redis "github.com/go-redis/redis/v8"
+	"context"
+	"github.com/velann21/bloom-services/common-lib/databases"
 )
 
-type UserRepoInterface interface {
+const USERKEY = "User"
 
+type UserRepoInterface interface {
+	CreateUser(ctx context.Context,key string,  value []byte)error
+	GetUser(ctx context.Context, key string)([]byte, error)
 }
 
 type UserRepo struct {
-	Client *redis.Client
+	redisClient *databases.Redis
 }
+
+func NewUserRepo(redisClient *databases.Redis)UserRepoInterface{
+	return &UserRepo{redisClient: redisClient}
+}
+
+func (userRepo *UserRepo) CreateUser(ctx context.Context,key string,  value []byte)error{
+	_, err := userRepo.redisClient.Set(ctx, key, value)
+	if err != nil{
+		return err
+	}
+	return nil
+}
+
+
+func (userRepo *UserRepo) GetUser(ctx context.Context, key string)([]byte, error){
+	result, err := userRepo.redisClient.Get(ctx, key)
+	if err != nil{
+		return nil, err
+	}
+	return result, nil
+}
+
 
 
