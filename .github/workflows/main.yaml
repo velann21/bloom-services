@@ -17,8 +17,4 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker Build
-        run: docker build . -t bloom_user_service:v1.0.0
-      - name: Docker Tag
-        run: docker tag  bloom_user_service:v1.0.0 singaravelan21/bloom_user_service:v1.0.0
-      - name: Docker Push
-        run: docker push singaravelan21/bloom_user_service:v1.0.0
+        run: make push_bloom_user_service
