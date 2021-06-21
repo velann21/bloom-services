@@ -1,9 +1,9 @@
 FROM golang:latest as builder
 WORKDIR /app/backend
-ADD ../ /app/backend
+ADD . /app/backend
 RUN ls -a
 #RUN go test -v -cover -coverprofile cover.out
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o /userssrv /app/backend/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o /userssrv /app/backend/users-service/main.go
 
 
 # final stage
