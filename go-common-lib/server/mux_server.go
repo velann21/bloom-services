@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-func Server(ctx context.Context, router *mux.Router){
+func Server(ctx context.Context, router *mux.Router, port string){
 	srv := &http.Server{
-		Addr:    ":8087",
+		Addr:  port,
 		Handler: router,
 	}
 	go func() {

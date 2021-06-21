@@ -9,8 +9,6 @@ type RedisConnection struct {
 	Client *databases.Redis
 }
 
-
-
 func (connection *RedisConnection) NewRedisConnection(ctx context.Context, address string, password string)error{
 	mu := sync.Mutex{}
 	mu.Lock()

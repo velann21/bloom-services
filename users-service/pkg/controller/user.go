@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/velann21/bloom-services/common-lib/entities/requests"
 	"github.com/velann21/bloom-services/common-lib/entities/response"
+	"github.com/velann21/bloom-services/common-lib/helpers"
 	userResponse "github.com/velann21/bloom-services/users-service/pkg/entities/response"
 	"github.com/velann21/bloom-services/users-service/pkg/service"
 	"net/http"
@@ -107,10 +108,15 @@ func (user User) UpdateUserWithPessimisticLock(resp http.ResponseWriter, req *ht
 }
 
 func (user User) GetUser(resp http.ResponseWriter, req *http.Request){
+	errorResponse := response.NewErrorResponse()
 	emailID := req.URL.Query().Get("email")
+	if emailID == ""{
+		errorResponse.HandleError(helpers.InvalidRequest, resp)
+		return
+	}
 	commonSuccessResponse := response.NewSuccessResponse()
 	successResponse  := userResponse.Response{Success: commonSuccessResponse}
-	errorResponse := response.NewErrorResponse()
+
 	userData, err := user.service.GetUser(req.Context(), emailID)
 	if err != nil{
 		logrus.WithError(err).Error("Error while GetUser service")
