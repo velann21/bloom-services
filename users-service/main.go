@@ -29,5 +29,5 @@ func main() {
 		logrus.Info("system call:%+v", osSignal)
 		cancel()
 	}()
-	server.Server(ctx, muxRoutes)
+	server.Server(ctx, muxRoutes, ":8086")
 }
