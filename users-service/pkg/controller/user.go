@@ -78,7 +78,32 @@ func (user User) UpdateUserWithOptimisticLock(resp http.ResponseWriter, req *htt
 }
 
 func (user User) UpdateUserWithPessimisticLock(resp http.ResponseWriter, req *http.Request){
-
+	logrus.Debug("Inside the UpdateUserWithPessimisticLock Controller")
+	commonSuccessResponse := response.NewSuccessResponse()
+	successResponse  := userResponse.Response{Success: commonSuccessResponse}
+	errorResponse := response.NewErrorResponse()
+	userEntity := requests.NewUserEntity()
+	err := userEntity.PopulateUser(req.Body)
+	if err != nil{
+		logrus.WithError(err).Error("Error in PopulateUser()")
+		errorResponse.HandleError(err, resp)
+		return
+	}
+	err = userEntity.ValidateUser()
+	if err != nil{
+		logrus.WithError(err).Error("Error while validate the requests")
+		errorResponse.HandleError(err, resp)
+		return
+	}
+	err = user.service.UpdateUserWithPessimisticLock(req.Context(), userEntity)
+	if err != nil{
+		logrus.WithError(err).Error("Error while UpdateUserWithOptimisticLock service")
+		errorResponse.HandleError(err, resp)
+		return
+	}
+	successResponse.UpdateUserResponse(userEntity.Email)
+	successResponse.Success.SuccessResponse(resp, http.StatusOK)
+	logrus.Debug("Completed the UpdateUserWithPessimisticLock Controller")
 }
 
 func (user User) GetUser(resp http.ResponseWriter, req *http.Request){

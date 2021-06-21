@@ -16,7 +16,7 @@ type UserInterface interface {
 	CreateUser(ctx context.Context, data *requests.User)error
 	GetUser(ctx context.Context, email string)(*models.User, error)
 	UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User)error
-	UpdateUserPessimisticLock(ctx context.Context, email string, data *requests.User)
+	UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User)error
 }
 
 type UserService struct {
@@ -83,8 +83,32 @@ func (users UserService) GetUser(ctx context.Context, email string)(*models.User
 	return userModel, nil
 }
 
-func (users UserService) UpdateUserPessimisticLock(ctx context.Context, email string, data *requests.User){
-
+func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User)error{
+	user, err := users.GetUser(ctx, data.Email)
+	if err != nil{
+		return err
+	}
+	userModel := &models.User{}
+	userModel.Email = data.Email
+	userModel.Name = data.Name
+	userModel.Address.ZipCode = data.Address.ZipCode
+	userModel.Address.StreetName = data.Address.StreetName
+	userModel.Address.HouseNumber = data.Address.HouseNumber
+	userModel.DOB.Month = data.DOB.Month
+	userModel.DOB.Year = data.DOB.Year
+	userModel.DOB.Day = data.DOB.Day
+	userModel.CreatedAt = user.CreatedAt
+	userModel.UpdatedAt = time.Now()
+	reqBodyBytes := new(bytes.Buffer)
+	err = json.NewEncoder(reqBodyBytes).Encode(userModel)
+	if err != nil{
+		return err
+	}
+	err = users.userRepo.UpdateUserWithPessimisticLocking(ctx, data.Email, reqBodyBytes.Bytes(), time.Minute*5)
+	if err != nil{
+		return err
+	}
+	return nil
 }
 
 func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User)error{
