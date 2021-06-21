@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [ main, feature/testing ]
-    paths:
-      - 'users-service/**'
 jobs:
   user-service:
     name: user-service-ci
