@@ -1,10 +1,8 @@
 FROM golang:latest as builder
-WORKDIR /app
-ADD . /app/
-RUN go mod vendor
-RUN go test -v ./...
+WORKDIR /app/backend
+ADD . /app/backend
 #RUN go test -v -cover -coverprofile cover.out
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o /userssrv /app/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod vendor -a -o /userssrv /app/backend/main.go
 
 
 # final stage
