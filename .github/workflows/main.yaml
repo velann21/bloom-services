@@ -18,9 +18,15 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build & Push Docker Image
         run: make tag=${GITHUB_SHA::8} push_bloom_user_service
+      - name: 'Set Secrets Artifacts'
+        env:
+          KEY_JSON: ${{ secrets.CLUSTER_SA }}
+        run: echo "$KEY_JSON"  > continuous-delivery.json
+      - name: Cat
+        run: cat continuous-delivery.json
       - uses: google-github-actions/setup-gcloud@master
         with:
-          service_account_key: ${{ secrets.CLUSTER_SA }}
+          service_account_key: continuous-delivery.json
           project_id: helpful-ally-314019
           export_default_credentials: true
 
