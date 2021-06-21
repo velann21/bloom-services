@@ -2,7 +2,7 @@ package models
 
 import (
 	"bytes"
-	"encoding/gob"
+	"encoding/json"
 	"time"
 )
 
@@ -29,7 +29,7 @@ type Address struct {
 
 func (user *User) PopulateUser(result []byte) error {
 	ioReader := bytes.NewReader(result)
-	err := gob.NewDecoder(ioReader).Decode(user)
+	err := json.NewDecoder(ioReader).Decode(user)
 	if err != nil{
 		return err
 	}

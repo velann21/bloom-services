@@ -3,7 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
-	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"github.com/velann21/bloom-services/common-lib/entities/requests"
 	"github.com/velann21/bloom-services/common-lib/helpers"
@@ -54,7 +54,7 @@ func (users UserService) CreateUser(ctx context.Context, data *requests.User)err
 	userModel.UpdatedAt = time.Now()
 
 	reqBodyBytes := new(bytes.Buffer)
-	err = gob.NewEncoder(reqBodyBytes).Encode(userModel)
+	err = json.NewEncoder(reqBodyBytes).Encode(userModel)
 	if err != nil{
 		return err
 	}
@@ -104,7 +104,7 @@ func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data 
 	userModel.CreatedAt = user.CreatedAt
 	userModel.UpdatedAt = time.Now()
 	reqBodyBytes := new(bytes.Buffer)
-	err = gob.NewEncoder(reqBodyBytes).Encode(userModel)
+	err = json.NewEncoder(reqBodyBytes).Encode(userModel)
 	if err != nil{
 		return err
 	}
