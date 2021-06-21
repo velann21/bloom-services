@@ -16,5 +16,13 @@ jobs:
         uses: actions/checkout@master
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Docker Build
+      - name: Build & Push Docker Image
         run: make tag=${GITHUB_SHA::8} push_bloom_user_service
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.CLUSTER_SA }}
+          project_id: helpful-ally-314019
+          export_default_credentials: true
+
+      - name: Helm install
+        run: kubectl get po

@@ -26,7 +26,8 @@ func main() {
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, os.Interrupt)
 	go func() {
 		osSignal := <-c
-		logrus.Info("system call:%+v", osSignal)
+		logrus.Info(osSignal)
+		//logrus.Info("system call:%+v", osSignal)
 		cancel()
 	}()
 	server.Server(ctx, muxRoutes, ":8086")

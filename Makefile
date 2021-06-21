@@ -9,3 +9,5 @@ build_bloom_user_service:vendor_bloom_user_service
 
 push_bloom_user_service:build_bloom_user_service
 	docker push singaravelan21/bloom_user_service:$(tag)
+helm_deploy:
+	helm install
