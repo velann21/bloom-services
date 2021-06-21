@@ -10,7 +10,7 @@ import (
 
 func Server(ctx context.Context, router *mux.Router){
 	srv := &http.Server{
-		Addr:    ":8086",
+		Addr:    ":8087",
 		Handler: router,
 	}
 	go func() {
