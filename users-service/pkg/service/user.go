@@ -77,41 +77,50 @@ func (users UserService) GetUser(ctx context.Context, email string) (*models.Use
 
 func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User) error {
 	logrus.Debug("Inside the UpdateUserWithPessimisticLock Service")
+
 	user, err := users.GetUser(ctx, data.Email)
 	if err != nil {
 		return err
 	}
+
 	userModel, err := users.makeUserModel(data, user.CreatedAt, time.Now())
 	if err != nil {
 		return err
 	}
+
 	err = users.userRepo.UpdateUserWithPessimisticLocking(ctx, data.Email, userModel, UserExpirationTime)
 	if err != nil {
 		return err
 	}
+
 	logrus.Debug("Completed the UpdateUserWithPessimisticLock Service")
 	return nil
 }
 
 func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User) error {
 	logrus.Debug("Inside the UpdateUserWithOptimisticLock Service")
+
 	user, err := users.GetUser(ctx, data.Email)
 	if err != nil {
 		return err
 	}
+
 	userModel, err := users.makeUserModel(data, user.CreatedAt, time.Now())
 	if err != nil {
 		return err
 	}
+
 	err = users.userRepo.UpdateUserWithOptimisticLocking(ctx, data.Email, userModel, UserExpirationTime)
 	if err != nil {
 		return err
 	}
+
 	logrus.Debug("Completed the UpdateUserWithOptimisticLock Service")
 	return nil
 }
 
 func (users UserService) makeUserModel(data *requests.User, createdAt, updatedAt time.Time) ([]byte, error) {
+
 	userModel := &models.User{}
 	userModel.Email = data.Email
 	userModel.Name = data.Name
