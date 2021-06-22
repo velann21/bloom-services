@@ -13,10 +13,7 @@ import (
 )
 
 func main() {
-	if os.Args[1] == "Dev" {
-		helpers.SetEnvUsersDevelopmentMode()
-	}
-
+	helpers.DetectAppMode(os.Args)
 	ctx, cancel := context.WithCancel(context.Background())
 	rc := &database.RedisConnection{}
 	err := rc.NewRedisConnection(ctx, helpers.GetEnv(helpers.REDIS), "")
@@ -37,3 +34,4 @@ func main() {
 	}()
 	server.Server(ctx, muxRoutes, ":8086")
 }
+

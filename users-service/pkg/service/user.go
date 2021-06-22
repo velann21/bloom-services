@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"github.com/velann21/bloom-services/common-lib/entities/requests"
 	"github.com/velann21/bloom-services/common-lib/helpers"
 	"github.com/velann21/bloom-services/users-service/pkg/entities/models"
@@ -31,6 +32,7 @@ func NewUserService(userRepo repository.UserRepoInterface) UserInterface {
 }
 
 func (users UserService) CreateUser(ctx context.Context, data *requests.User) error {
+	logrus.Debug("Inside the CreateUser Service")
 	result, err := users.userRepo.GetUser(ctx, data.Email)
 	if err != nil {
 		if err.Error() == helpers.RedisNil {
@@ -65,10 +67,12 @@ createUser:
 	if err != nil {
 		return err
 	}
+	logrus.Debug("Done the CreateUser Service")
 	return nil
 }
 
 func (users UserService) GetUser(ctx context.Context, email string) (*models.User, error) {
+	logrus.Debug("Inside the GetUser Service")
 	result, err := users.userRepo.GetUser(ctx, email)
 	if err != nil {
 		return nil, err
@@ -81,10 +85,12 @@ func (users UserService) GetUser(ctx context.Context, email string) (*models.Use
 	if err != nil {
 		return nil, err
 	}
+	logrus.Debug("Completed the GetUser Service")
 	return userModel, nil
 }
 
 func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User) error {
+	logrus.Debug("Inside the UpdateUserWithPessimisticLock Service")
 	user, err := users.GetUser(ctx, data.Email)
 	if err != nil {
 		return err
@@ -109,10 +115,12 @@ func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data
 	if err != nil {
 		return err
 	}
+	logrus.Debug("Completed the UpdateUserWithPessimisticLock Service")
 	return nil
 }
 
 func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User) error {
+	logrus.Debug("Inside the UpdateUserWithOptimisticLock Service")
 	user, err := users.GetUser(ctx, data.Email)
 	if err != nil {
 		return err
@@ -137,5 +145,6 @@ func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data 
 	if err != nil {
 		return err
 	}
+	logrus.Debug("Completed the UpdateUserWithOptimisticLock Service")
 	return nil
 }

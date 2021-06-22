@@ -27,13 +27,13 @@ func (user User) CreateUser(resp http.ResponseWriter, req *http.Request) {
 	userEntity := requests.NewUserEntity()
 	err := userEntity.PopulateUser(req.Body)
 	if err != nil {
-		logrus.WithError(err).Error("Error in PopulateUser()")
+		logrus.WithError(err).Error("Error in PopulateUser() CreateUser")
 		errorResponse.HandleError(err, resp)
 		return
 	}
 	err = userEntity.ValidateUser()
 	if err != nil {
-		logrus.WithError(err).Error("Error while validate the requests")
+		logrus.WithError(err).Error("Error while validate the requests CreateUser")
 		errorResponse.HandleError(err, resp)
 		return
 	}
@@ -57,13 +57,13 @@ func (user User) UpdateUserWithOptimisticLock(resp http.ResponseWriter, req *htt
 	userEntity := requests.NewUserEntity()
 	err := userEntity.PopulateUser(req.Body)
 	if err != nil {
-		logrus.WithError(err).Error("Error in PopulateUser()")
+		logrus.WithError(err).Error("Error in PopulateUser() UpdateUserWithOptimisticLock")
 		errorResponse.HandleError(err, resp)
 		return
 	}
 	err = userEntity.ValidateUser()
 	if err != nil {
-		logrus.WithError(err).Error("Error while validate the requests")
+		logrus.WithError(err).Error("Error while validate the requests UpdateUserWithOptimisticLock")
 		errorResponse.HandleError(err, resp)
 		return
 	}
@@ -86,13 +86,13 @@ func (user User) UpdateUserWithPessimisticLock(resp http.ResponseWriter, req *ht
 	userEntity := requests.NewUserEntity()
 	err := userEntity.PopulateUser(req.Body)
 	if err != nil {
-		logrus.WithError(err).Error("Error in PopulateUser()")
+		logrus.WithError(err).Error("Error in PopulateUser() UpdateUserWithPessimisticLock")
 		errorResponse.HandleError(err, resp)
 		return
 	}
 	err = userEntity.ValidateUser()
 	if err != nil {
-		logrus.WithError(err).Error("Error while validate the requests")
+		logrus.WithError(err).Error("Error while validate the requests UpdateUserWithPessimisticLock")
 		errorResponse.HandleError(err, resp)
 		return
 	}
@@ -111,6 +111,7 @@ func (user User) GetUser(resp http.ResponseWriter, req *http.Request) {
 	errorResponse := response.NewErrorResponse()
 	emailID := req.URL.Query().Get("email")
 	if emailID == "" {
+		logrus.Error("No Email provided GetUser()")
 		errorResponse.HandleError(helpers.InvalidRequest, resp)
 		return
 	}

@@ -3,6 +3,7 @@ package helpers
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"os"
 	"time"
 )
@@ -35,4 +36,27 @@ func GetEnv(key string) string {
 
 func SetEnvUsersDevelopmentMode() {
 	_ = os.Setenv("REDIS_CONN", "127.0.0.1:6379")
+}
+
+func DetectAppMode(args []string){
+	for _, arg := range args{
+		if arg == "Dev"{
+			lvl := "debug"
+			logrus.Info("App running in Dev Mode")
+			SetEnvUsersDevelopmentMode()
+			ll, err := logrus.ParseLevel(lvl)
+			if err != nil {
+				ll = logrus.DebugLevel
+			}
+			logrus.SetLevel(ll)
+			break
+		}else if arg == "Prod"{
+			logrus.Info("App running in Prod Mode")
+			if GetEnv(REDIS) == ""{
+				logrus.Info("Redis conn string cannot be empty")
+				os.Exit(1)
+			}
+			break
+		}
+	}
 }
