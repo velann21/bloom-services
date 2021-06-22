@@ -23,8 +23,10 @@ func main() {
 	}
 
 	muxRoutes := server.NewMux()
+	indexRoutes := muxRoutes.PathPrefix("/user/").Subrouter()
 	usersRoutes := muxRoutes.PathPrefix("/users/api/v1").Subrouter()
 	routes.Routes(server.NewRouter(usersRoutes), rc.Client)
+	routes.IndexRoutes(server.NewRouter(indexRoutes))
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, os.Interrupt)
 	go func() {
@@ -32,6 +34,6 @@ func main() {
 		logrus.Info(osSignal)
 		cancel()
 	}()
-	server.Server(ctx, muxRoutes, ":8086")
+	server.Server(ctx, muxRoutes, ":5000")
 }
 
