@@ -35,37 +35,45 @@ func NewUserRepo(redisClient databases.Cache) UserRepoInterface {
 
 func (userRepo UserRepo) CreateUser(ctx context.Context, key string, value []byte, expiration time.Duration) error {
 	logrus.Debug("Inside the CreateUser Repository func")
+
 	_, err := userRepo.redisClient.SetWithTTL(ctx, key, value, expiration)
 	if err != nil {
 		return err
 	}
+
 	logrus.Debug("Complete the CreateUser Repository func")
 	return nil
 }
 
 func (userRepo UserRepo) GetUser(ctx context.Context, key string) ([]byte, error) {
 	logrus.Debug("Inside the GetUser Repository func")
+
 	result, err := userRepo.redisClient.Get(ctx, key)
 	if err != nil {
 		return nil, err
 	}
+
 	logrus.Debug("Completed the GetUser Repository func")
 	return result, nil
 }
 
 func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error {
 	logrus.Debug("Inside the UpdateUserWithPessimisticLocking Repository func")
+
 	lockKey := fmt.Sprintf(LockPrefix + key)
+
 	res, err := userRepo.redisClient.SetNX(ctx, lockKey, nil, LockExpiry)
 	if err != nil {
 		return err
 	}
+
 	if res.Val() == false {
 		ttl, _ := userRepo.redisClient.GetTTL(ctx, lockKey)
 		return errors.New(LockExistMessage + ttl.String())
 	}
 
 	pipe := userRepo.redisClient.Begin()
+
 	_, err = userRepo.redisClient.PipelineSetTTL(pipe, ctx, key, value, expiration)
 	if err != nil {
 		// TODO: Add the retry if required here
@@ -83,12 +91,14 @@ func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, k
 		// TODO: Add the retry if required here
 		return err
 	}
+
 	logrus.Debug("Inside the UpdateUserWithPessimisticLocking Repository func")
 	return nil
 }
 
 func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error {
 	logrus.Debug("Inside the UpdateUserWithOptimisticLocking Repository func")
+
 	err := userRepo.redisClient.Watch(ctx,
 		userRepo.redisClient.GetTransactionFunc(ctx, key, value, expiration),
 		key)
@@ -99,6 +109,7 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 		// TODO: Add retry mechanism here
 		return err
 	}
+
 	logrus.Debug("Completed the UpdateUserWithOptimisticLocking Repository func")
 	return nil
 }
@@ -107,10 +118,12 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 func (userRepo UserRepo) GetUserLock(ctx context.Context, key string) error {
 	lockKey := fmt.Sprintf(LockPrefix + key)
 	timeout := time.Minute * 5
+
 	res, err := userRepo.redisClient.SetNX(ctx, lockKey, nil, timeout)
 	if err != nil {
 		return err
 	}
+
 	if res.Val() == false {
 		ttl, _ := userRepo.redisClient.GetTTL(ctx, lockKey)
 		return errors.New(LockExistMessage + ttl.String())
