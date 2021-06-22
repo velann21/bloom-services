@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: REDIS_CONN
-            value: "redis"
+            value: "redis:6379"
           ports:
             - name: http
               containerPort: 80
