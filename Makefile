@@ -11,7 +11,7 @@ push_bloom_user_service:build_bloom_user_service
 	docker push singaravelan21/bloom_user_service:$(tag)
 
 deploy_bloom_user_service:
-	cd ./users-service/deployments/helm_charts && helm upgrade --install redis ./redis && helm upgrade --install bloom-user-services ./user-service --set image.tag=$(tag)
+	cd ./users-service/deployments/helm_charts && helm upgrade --install redis ./redis --atomic --timeout 180 && helm upgrade --install bloom-user-services ./user-service --set image.tag=$(tag) --atomic --timeout 180
 
 unit_test_bloom_user_service:
 	cd ./users-service && go test -v ./... -v -short
