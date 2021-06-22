@@ -6,8 +6,8 @@ import (
 )
 
 type SuccessResponse struct {
-	Success bool `json:"success"`
-	Status  string `json:"status"`
+	Success bool                     `json:"success"`
+	Status  string                   `json:"status"`
 	Data    []map[string]interface{} `json:"data"`
 }
 
@@ -15,8 +15,7 @@ func NewSuccessResponse() *SuccessResponse {
 	return &SuccessResponse{}
 }
 
-
-func (resp *SuccessResponse) SuccessResponse(rw http.ResponseWriter, statusCode int){
+func (resp *SuccessResponse) SuccessResponse(rw http.ResponseWriter, statusCode int) {
 	rw.Header().Set("Content-Type", "application/json")
 
 	switch statusCode {
@@ -41,4 +40,3 @@ func (resp *SuccessResponse) SuccessResponse(rw http.ResponseWriter, statusCode 
 	_ = json.NewEncoder(rw).Encode(resp)
 	return
 }
-

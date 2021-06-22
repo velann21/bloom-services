@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    deploy: redis
+spec:
+  ports:
+    - name: redis
+      port: 80
+      targetPort: 6379
+  selector:
+    deploy: redis
