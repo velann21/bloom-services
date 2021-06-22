@@ -10,6 +10,9 @@ build_bloom_user_service:vendor_bloom_user_service
 push_bloom_user_service:build_bloom_user_service
 	docker push singaravelan21/bloom_user_service:$(tag)
 
+deploy_bloom_user_service:
+	cd ./users-service/deployments/helm_charts && helm upgrade --install redis ./redis && helm upgrade --install bloom-user-services ./user-service --set image.tag=$(tag)
+
 unit_test_bloom_user_service:
 	cd ./users-service && go test -v ./... -v -short
 

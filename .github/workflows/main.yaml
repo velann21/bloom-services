@@ -21,19 +21,14 @@ jobs:
       - name: Build & Push Docker Image
         run: make tag=${GITHUB_SHA::8} push_bloom_user_service
 
-      - name: 'Set Secrets Artifacts'
-        env:
-          KEY_JSON: ${{ secrets.CLUSTER_SA }}
-        run: echo "$KEY_JSON" | base64 --decode > continuous-delivery.json
-
-      - name: Cat
-        run: cat continuous-delivery.json
       - uses: google-github-actions/setup-gcloud@master
         with:
           service_account_key: ${{ secrets.CLUSTER_SA }}
           project_id: helpful-ally-314019
           export_default_credentials: true
+
       - name: get-cred
         run: gcloud container clusters get-credentials bloom-cluster --region europe-west3-a --project  helpful-ally-314019
+
       - name: Helm install
-        run: kubectl get po
+        run: make tag=${GITHUB_SHA::8} deploy_bloom_user_service

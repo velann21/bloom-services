@@ -10,5 +10,5 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /userssrv ./
 RUN chmod +x ./userssrv
-ENTRYPOINT ["./userssrv"]
+ENTRYPOINT ["./userssrv Prod"]
 EXPOSE 8080

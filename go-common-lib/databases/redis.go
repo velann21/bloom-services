@@ -223,3 +223,11 @@ func (redis Redis) Delete(ctx context.Context, key string) error {
 	}
 	return nil
 }
+
+func (redis Redis) PubSubChannels(ctx context.Context, pattern string)([]string, error){
+	output := redis.Client.PubSubChannels(ctx, pattern)
+	if output.Err() != nil{
+		return nil, output.Err()
+	}
+	return output.Val(), nil
+}
