@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/sirupsen/logrus"
+	"github.com/velann21/bloom-services/common-lib/helpers"
 	"github.com/velann21/bloom-services/common-lib/server"
 	"github.com/velann21/bloom-services/users-service/pkg/database"
 	"github.com/velann21/bloom-services/users-service/pkg/routes"
@@ -12,13 +13,18 @@ import (
 )
 
 func main() {
+	if os.Args[1] == "Dev" {
+		helpers.SetEnvUsersDevelopmentMode()
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	rc := &database.RedisConnection{}
-	err := rc.NewRedisConnection(ctx, "127.0.0.1:6379", "")
+	err := rc.NewRedisConnection(ctx, helpers.GetEnv(helpers.REDIS), "")
 	if err != nil{
 		logrus.WithError(err).Error("Something went wrong in redis connection")
 		os.Exit(1)
 	}
+
 	muxRoutes := server.NewMux()
 	usersRoutes := muxRoutes.PathPrefix("/users/api/v1").Subrouter()
 	routes.Routes(server.NewRouter(usersRoutes), rc.Client)
@@ -27,7 +33,6 @@ func main() {
 	go func() {
 		osSignal := <-c
 		logrus.Info(osSignal)
-		//logrus.Info("system call:%+v", osSignal)
 		cancel()
 	}()
 	server.Server(ctx, muxRoutes, ":8086")

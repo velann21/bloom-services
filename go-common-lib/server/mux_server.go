@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-func Server(ctx context.Context, router *mux.Router, port string){
+func Server(ctx context.Context, router *mux.Router, port string) {
 	srv := &http.Server{
-		Addr:  port,
+		Addr:    port,
 		Handler: router,
 	}
 	go func() {
@@ -38,7 +38,7 @@ func Server(ctx context.Context, router *mux.Router, port string){
 	return
 }
 
-func NewMux()*mux.Router{
+func NewMux() *mux.Router {
 	r := mux.NewRouter().StrictSlash(false)
 	return r
 }
@@ -47,8 +47,6 @@ type Router struct {
 	Router *mux.Router
 }
 
-func NewRouter(routes *mux.Router)*Router{
+func NewRouter(routes *mux.Router) *Router {
 	return &Router{Router: routes}
 }
-
-

@@ -9,7 +9,7 @@ type Response struct {
 	Success *response.SuccessResponse
 }
 
-func (resp *Response) CreateUserResponse(email string){
+func (resp *Response) CreateUserResponse(email string) {
 	responseData := make([]map[string]interface{}, 0)
 	metaData := make(map[string]interface{})
 	metaData["message"] = "Success"
@@ -20,7 +20,7 @@ func (resp *Response) CreateUserResponse(email string){
 
 }
 
-func (resp *Response) UpdateUserResponse(email string){
+func (resp *Response) UpdateUserResponse(email string) {
 	responseData := make([]map[string]interface{}, 0)
 	metaData := make(map[string]interface{})
 	metaData["email"] = email
@@ -29,7 +29,7 @@ func (resp *Response) UpdateUserResponse(email string){
 	resp.Success.Success = true
 }
 
-func (resp *Response) GetUserResponse(user *models.User){
+func (resp *Response) GetUserResponse(user *models.User) {
 	responseData := make([]map[string]interface{}, 0)
 	metaData := make(map[string]interface{})
 	metaData["user"] = user
@@ -37,4 +37,3 @@ func (resp *Response) GetUserResponse(user *models.User){
 	resp.Success.Data = responseData
 	resp.Success.Success = true
 }
-

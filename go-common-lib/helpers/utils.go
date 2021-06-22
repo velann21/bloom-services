@@ -3,6 +3,7 @@ package helpers
 import (
 	"bytes"
 	"encoding/json"
+	"os"
 	"time"
 )
 
@@ -11,11 +12,27 @@ func GetDOB(year, month, day int) time.Time {
 	return dob
 }
 
-func ConvertStructToBytes(data interface{})([]byte,error){
+func ConvertStructToBytes(data interface{}) ([]byte, error) {
 	reqBodyBytes := new(bytes.Buffer)
 	err := json.NewEncoder(reqBodyBytes).Encode(data)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	return reqBodyBytes.Bytes(), nil
+}
+
+const (
+	REDIS = "REDIS_CONN"
+)
+
+func GetEnv(key string) string {
+	switch key {
+	case REDIS:
+		return os.Getenv(REDIS)
+	}
+	return ""
+}
+
+func SetEnvUsersDevelopmentMode() {
+	_ = os.Setenv("REDIS_CONN", "127.0.0.1:6379")
 }

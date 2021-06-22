@@ -8,18 +8,18 @@ import (
 )
 
 func TestNewRedis(t *testing.T) {
-	tests := []struct{
-		context context.Context
+	tests := []struct {
+		context          context.Context
 		connectionString string
-		err error
+		err              error
 	}{
 		{context: context.Background(), connectionString: "127.0.0.1:6379", err: nil},
 		{context: context.Background(), connectionString: "127.0.0.1:2379", err: errors.New("dial tcp 127.0.0.1:6379: connect: connection refused")},
 	}
-	for _, test := range tests{
+	for _, test := range tests {
 		_, err := NewRedis(test.context, test.connectionString, "")
-		if err != nil{
-			assert.Error(t,  test.err, err)
+		if err != nil {
+			assert.Error(t, test.err, err)
 			continue
 		}
 		assert.IsType(t, err, nil)

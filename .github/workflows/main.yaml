@@ -21,7 +21,7 @@ jobs:
       - name: 'Set Secrets Artifacts'
         env:
           KEY_JSON: ${{ secrets.CLUSTER_SA }}
-        run: echo "$KEY_JSON"  > continuous-delivery.json
+        run: echo "$KEY_JSON" | base64 --decode > continuous-delivery.json
       - name: Cat
         run: cat continuous-delivery.json
       - uses: google-github-actions/setup-gcloud@master

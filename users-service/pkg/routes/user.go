@@ -8,7 +8,7 @@ import (
 	"github.com/velann21/bloom-services/users-service/pkg/service"
 )
 
-func Routes(router *server.Router, redisConnection *databases.Redis){
+func Routes(router *server.Router, redisConnection *databases.Redis) {
 	userRepo := repository.NewUserRepo(redisConnection)
 	userService := service.NewUserService(userRepo)
 	userController := controller.NewUserController(userService)

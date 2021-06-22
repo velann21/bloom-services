@@ -17,39 +17,77 @@ import (
 	"text/template"
 )
 
+func TestUser_CreateUserController(t *testing.T) {
+	tests := []struct {
+		body               string
+		serviceTYpe        string
+		expectedStatusCode string
+	}{
+		{body: ProcessUserRequestBody(Rand{rand.Intn(10000)}), serviceTYpe: "200", expectedStatusCode: "201 Created"},
+		{body: invalidRequests, serviceTYpe: "400", expectedStatusCode: "400 Bad Request"},
+		{body: "", serviceTYpe: "400", expectedStatusCode: "400 Bad Request"},
+		{body: ProcessUserRequestBody(Rand{rand.Intn(10000)}), serviceTYpe: "400", expectedStatusCode: "500 Internal Server Error"},
+		{body: ProcessUserRequestBody(Rand{rand.Intn(10000)}), serviceTYpe: "500", expectedStatusCode: "500 Internal Server Error"},
+	}
+	for _, test := range tests {
+		request, _ := http.NewRequest(http.MethodPost, "/users/api/v1/user", strings.NewReader(test.body))
+		response := httptest.NewRecorder()
+		MockRouter(NewMockUserService(test.serviceTYpe)).ServeHTTP(response, request)
+		assert.Equal(t, response.Result().Status, test.expectedStatusCode)
+	}
+}
+
+func TestUser_GetUserController(t *testing.T) {
+	tests := []struct {
+		email              string
+		expectedStatusCode string
+		serviceTYpe        string
+	}{
+		{email: "jack@gmail.com", expectedStatusCode: "200 OK", serviceTYpe: "200"},
+		{email: "", expectedStatusCode: "400 Bad Request", serviceTYpe: "400"},
+		{email: "", expectedStatusCode: "400 Bad Request", serviceTYpe: "500"},
+	}
+	for _, test := range tests {
+		request, _ := http.NewRequest(http.MethodGet, "/users/api/v1/user?email="+test.email, nil)
+		response := httptest.NewRecorder()
+		MockRouter(NewMockUserService(test.serviceTYpe)).ServeHTTP(response, request)
+		assert.Equal(t, test.expectedStatusCode, response.Result().Status)
+	}
+}
+
 type MockUserService struct {
 	expectedOutput string
 }
 
-func NewMockUserService(expectedOutput string)*MockUserService{
+func NewMockUserService(expectedOutput string) *MockUserService {
 	return &MockUserService{expectedOutput: expectedOutput}
 }
-func (service MockUserService) CreateUser(ctx context.Context, data *requests.User)error{
-	if service.expectedOutput == "400"{
+func (service MockUserService) CreateUser(ctx context.Context, data *requests.User) error {
+	if service.expectedOutput == "400" {
 		return helpers.UserAlreadyExist
 	}
-	if service.expectedOutput == "500"{
+	if service.expectedOutput == "500" {
 		return helpers.SomethingWrong
 	}
 	return nil
 }
-func (service MockUserService) GetUser(ctx context.Context, email string)(*models.User, error){
-	if service.expectedOutput == "400"{
+func (service MockUserService) GetUser(ctx context.Context, email string) (*models.User, error) {
+	if service.expectedOutput == "400" {
 		return nil, helpers.NoResultFound
 	}
-	if service.expectedOutput == "500"{
+	if service.expectedOutput == "500" {
 		return nil, helpers.SomethingWrong
 	}
 	return nil, nil
 }
-func (service MockUserService) UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User)error{
+func (service MockUserService) UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User) error {
 	return nil
 }
-func (service MockUserService) UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User)error{
+func (service MockUserService) UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User) error {
 	return nil
 }
 
-func MockRouter(userService service.UserInterface)*mux.Router{
+func MockRouter(userService service.UserInterface) *mux.Router {
 	router := mux.NewRouter()
 	userRoutes := router.PathPrefix("/users/api/v1").Subrouter()
 	controller := NewUserController(userService)
@@ -60,47 +98,7 @@ func MockRouter(userService service.UserInterface)*mux.Router{
 	return router
 }
 
-func TestUser_CreateUserController(t *testing.T) {
-	tests := []struct{
-		body string
-		serviceTYpe string
-		expectedStatusCode string
-	}{
-		{body: ProcessUserRequestBody(Rand{rand.Intn(10000)}),serviceTYpe: "200", expectedStatusCode: "201 Created"},
-		{body: invalidRequests, serviceTYpe: "400", expectedStatusCode: "400 Bad Request"},
-		{body: "", serviceTYpe: "400", expectedStatusCode: "400 Bad Request"},
-		{body: ProcessUserRequestBody(Rand{rand.Intn(10000)}),serviceTYpe: "400", expectedStatusCode: "500 Internal Server Error"},
-		{body: ProcessUserRequestBody(Rand{rand.Intn(10000)}),serviceTYpe: "500", expectedStatusCode: "500 Internal Server Error"},
-	}
-	for _, test := range tests{
-		request, _ := http.NewRequest(http.MethodPost, "/users/api/v1/user", strings.NewReader(test.body))
-		response := httptest.NewRecorder()
-		MockRouter(NewMockUserService(test.serviceTYpe)).ServeHTTP(response, request)
-		assert.Equal(t, response.Result().Status, test.expectedStatusCode)
-	}
-}
-
-func TestUser_GetUserController(t *testing.T) {
-	tests := []struct{
-		email string
-		expectedStatusCode string
-		serviceTYpe string
-	}{
-		{email: "jack@gmail.com", expectedStatusCode: "200 OK", serviceTYpe: "200"},
-		{email: "", expectedStatusCode: "400 Bad Request", serviceTYpe: "400"},
-		{email: "", expectedStatusCode: "400 Bad Request", serviceTYpe: "500"},
-	}
-	for _, test := range tests{
-		request, _ := http.NewRequest(http.MethodGet, "/users/api/v1/user?email="+test.email, nil)
-		response := httptest.NewRecorder()
-		MockRouter(NewMockUserService(test.serviceTYpe)).ServeHTTP(response, request)
-		assert.Equal(t,  test.expectedStatusCode, response.Result().Status)
-	}
-}
-
-
-
-func ProcessUserRequestBody(Random Rand)string{
+func ProcessUserRequestBody(Random Rand) string {
 	var tmplBytes bytes.Buffer
 	t := template.New("User template")
 	t, err := t.Parse(bodySuccess)

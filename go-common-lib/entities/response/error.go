@@ -8,7 +8,7 @@ import (
 )
 
 type ErrorResponse struct {
-	Success bool `json:"success"`
+	Success bool    `json:"success"`
 	Errors  []Error `json:"errors"`
 }
 
@@ -18,7 +18,7 @@ func NewErrorResponse() *ErrorResponse {
 
 type Error struct {
 	Message   string `json:"message"`
-	ErrorCode int `json:"error_code"`
+	ErrorCode int    `json:"error_code"`
 }
 
 func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
