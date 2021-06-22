@@ -16,6 +16,8 @@ jobs:
         uses: actions/checkout@master
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Run Redis
+        run: docker run -it -d -p 6379:6379 redis
       - name: Build & Push Docker Image
         run: make tag=${GITHUB_SHA::8} push_bloom_user_service
       - name: 'Set Secrets Artifacts'
