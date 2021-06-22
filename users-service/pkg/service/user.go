@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	UserExpirationTime =  time.Minute * 10
+	UserExpirationTime = time.Minute * 10
 )
 
 type UserInterface interface {
@@ -43,27 +43,13 @@ func (users UserService) CreateUser(ctx context.Context, data *requests.User) er
 	if result != nil {
 		return helpers.UserAlreadyExist
 	}
-
+	// GOTO statement
 createUser:
-	userModel := &models.User{}
-	userModel.Email = data.Email
-	userModel.Name = data.Name
-	userModel.Address.ZipCode = data.Address.ZipCode
-	userModel.Address.StreetName = data.Address.StreetName
-	userModel.Address.HouseNumber = data.Address.HouseNumber
-	userModel.DOB.Month = data.DOB.Month
-	userModel.DOB.Year = data.DOB.Year
-	userModel.DOB.Day = data.DOB.Day
-	userModel.CreatedAt = time.Now()
-	userModel.UpdatedAt = time.Now()
-
-	reqBodyBytes := new(bytes.Buffer)
-	err = json.NewEncoder(reqBodyBytes).Encode(userModel)
+	userModel, err := users.makeUserModel(data, time.Now(), time.Now())
 	if err != nil {
 		return err
 	}
-
-	err = users.userRepo.CreateUser(ctx, userModel.Email, reqBodyBytes.Bytes(), UserExpirationTime)
+	err = users.userRepo.CreateUser(ctx, data.Email, userModel, UserExpirationTime)
 	if err != nil {
 		return err
 	}
@@ -95,23 +81,11 @@ func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data
 	if err != nil {
 		return err
 	}
-	userModel := &models.User{}
-	userModel.Email = data.Email
-	userModel.Name = data.Name
-	userModel.Address.ZipCode = data.Address.ZipCode
-	userModel.Address.StreetName = data.Address.StreetName
-	userModel.Address.HouseNumber = data.Address.HouseNumber
-	userModel.DOB.Month = data.DOB.Month
-	userModel.DOB.Year = data.DOB.Year
-	userModel.DOB.Day = data.DOB.Day
-	userModel.CreatedAt = user.CreatedAt
-	userModel.UpdatedAt = time.Now()
-	reqBodyBytes := new(bytes.Buffer)
-	err = json.NewEncoder(reqBodyBytes).Encode(userModel)
+	userModel, err := users.makeUserModel(data, user.CreatedAt, time.Now())
 	if err != nil {
 		return err
 	}
-	err = users.userRepo.UpdateUserWithPessimisticLocking(ctx, data.Email, reqBodyBytes.Bytes(), UserExpirationTime)
+	err = users.userRepo.UpdateUserWithPessimisticLocking(ctx, data.Email, userModel, UserExpirationTime)
 	if err != nil {
 		return err
 	}
@@ -125,6 +99,19 @@ func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data 
 	if err != nil {
 		return err
 	}
+	userModel, err := users.makeUserModel(data, user.CreatedAt, time.Now())
+	if err != nil {
+		return err
+	}
+	err = users.userRepo.UpdateUserWithOptimisticLocking(ctx, data.Email, userModel, UserExpirationTime)
+	if err != nil {
+		return err
+	}
+	logrus.Debug("Completed the UpdateUserWithOptimisticLock Service")
+	return nil
+}
+
+func (users UserService) makeUserModel(data *requests.User, createdAt, updatedAt time.Time) ([]byte, error) {
 	userModel := &models.User{}
 	userModel.Email = data.Email
 	userModel.Name = data.Name
@@ -134,17 +121,13 @@ func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data 
 	userModel.DOB.Month = data.DOB.Month
 	userModel.DOB.Year = data.DOB.Year
 	userModel.DOB.Day = data.DOB.Day
-	userModel.CreatedAt = user.CreatedAt
-	userModel.UpdatedAt = time.Now()
+	userModel.CreatedAt = createdAt
+	userModel.UpdatedAt = updatedAt
+
 	reqBodyBytes := new(bytes.Buffer)
-	err = json.NewEncoder(reqBodyBytes).Encode(userModel)
+	err := json.NewEncoder(reqBodyBytes).Encode(userModel)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = users.userRepo.UpdateUserWithOptimisticLocking(ctx, data.Email, reqBodyBytes.Bytes(), UserExpirationTime)
-	if err != nil {
-		return err
-	}
-	logrus.Debug("Completed the UpdateUserWithOptimisticLock Service")
-	return nil
+	return reqBodyBytes.Bytes(), nil
 }
