@@ -1,7 +1,7 @@
 # bloom-service
 This is the Monorepo for the bloom services and currently it has the implementation for common library and user service in Go.
 
-##Folder Structure:
+## Folder Structure:
 
   root structure:
     
@@ -40,7 +40,7 @@ This is the Monorepo for the bloom services and currently it has the implementat
   main.go -> App entry point
  ```
    
-#API SPEC:
+# API SPEC:
 
 ## Create User API:
  ```
@@ -129,7 +129,7 @@ Failed Response Body:
 }
 ```
 
-##UpdateWithPessimisticLock
+## UpdateWithPessimisticLock
 ```
 http://localhost:8086/users/api/v1/user/pessimistic
 {
@@ -170,7 +170,7 @@ Failed Response Body:
 }
 ```
 
-##UpdateWithOptimisticLock
+## UpdateWithOptimisticLock
 ```
 http://localhost:8086/users/api/v1/user/optimistic
 {
@@ -211,14 +211,14 @@ Failed Response Body:
 }
 ```
 
-#PreRequisite tools to run the project 
+# PreRequisite tools to run the project 
 1. GO Installed
 2. Redis
 3. Docker
 4. Kubernetes
 5. Helm
 
-#How to run the Project:
+# How to run the Project:
 Please use the Makefile to run the project
 ``````
 vendor_bloom_user_service:
@@ -244,7 +244,7 @@ integration_test_bloom_user_service:
 
 ```````
 
-#Should be improved/Implemented:
+# Should be improved/Implemented:
 ```
 1. Should Prometheus metrics
 2. Should implement the Bonus point writting the expired user to filesystem
@@ -252,10 +252,10 @@ integration_test_bloom_user_service:
 4. Distributed lock for clusterd redis
 ```
 
-##Assumption:
+## Assumption:
 1. I assumed that the there will be single instance of redis so I haven't used distributed lock(Redlock)
 
-##Notes:
+## Notes:
 I have completed the assignment in almost 8hrs, I could improve lot of things in this assignment.
 
 
