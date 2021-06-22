@@ -6,12 +6,11 @@ import (
 	"net/http"
 )
 
-func IndexRoutes(router *server.Router){
+func IndexRoutes(router *server.Router) {
 	router.Router.Path("/health").HandlerFunc(HealthStatus).Methods("GET")
 }
 
-
-func HealthStatus(resp http.ResponseWriter, req *http.Request){
+func HealthStatus(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(200)
 	_ = json.NewEncoder(resp).Encode(resp)
 	return
