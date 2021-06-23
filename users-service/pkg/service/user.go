@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	UserExpirationTime = time.Minute * 10
+	UserExpirationTime = time.Minute * 1
 )
 
 type UserInterface interface {
@@ -21,6 +21,7 @@ type UserInterface interface {
 	GetUser(ctx context.Context, email string) (*models.User, error)
 	UpdateUserWithOptimisticLock(ctx context.Context, data *requests.User) error
 	UpdateUserWithPessimisticLock(ctx context.Context, data *requests.User) error
+	UserExpiredEvent(ctx context.Context, eventStream chan string, errChan chan error)
 }
 
 type UserService struct {
@@ -117,6 +118,10 @@ func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data 
 
 	logrus.Debug("Completed the UpdateUserWithOptimisticLock Service")
 	return nil
+}
+
+func (users UserService) UserExpiredEvent(ctx context.Context, eventStream chan string, errChan chan error){
+	users.userRepo.SubscribeForKeyExpireChannel(ctx, eventStream, errChan)
 }
 
 func (users UserService) makeUserModel(data *requests.User, createdAt, updatedAt time.Time) ([]byte, error) {

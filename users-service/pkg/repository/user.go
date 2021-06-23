@@ -23,6 +23,7 @@ type UserRepoInterface interface {
 	UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error
 	GetUserLock(ctx context.Context, key string) error
 	DeleteUserLock(ctx context.Context, key string) error
+	SubscribeForKeyExpireChannel(ctx context.Context, eventStream chan string, errChan chan error)
 }
 
 type UserRepo struct {
@@ -112,6 +113,20 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 
 	logrus.Debug("Completed the UpdateUserWithOptimisticLocking Repository func")
 	return nil
+}
+
+func (userRepo UserRepo) SubscribeForKeyExpireChannel(ctx context.Context, eventStream chan string, errChan chan error){
+	stream := userRepo.redisClient.Subscribe(ctx, "__keyevent@0__:expired")
+	for {
+		logrus.Info("Start Listening for message")
+		msg, err := stream.ReceiveMessage(ctx)
+		if err != nil{
+			logrus.WithError(err).Error("Error while ReceiveMessage for event key expired")
+			errChan <- err
+		}
+		logrus.Info("Event Recieved")
+		eventStream <- msg.String()
+	}
 }
 
 // This is just write integration test

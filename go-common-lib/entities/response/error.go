@@ -55,6 +55,18 @@ func (err *ErrorResponse) HandleError(er error, w http.ResponseWriter) {
 		}
 		w.WriteHeader(500)
 		_ = json.NewEncoder(w).Encode(resp)
+	case helpers.RedisNilError:
+		errObj := Error{
+			Message:   er.Error(),
+			ErrorCode: 2,
+		}
+		errList = append(errList, errObj)
+		resp := ErrorResponse{
+			Success: false,
+			Errors:  errList,
+		}
+		w.WriteHeader(404)
+		_ = json.NewEncoder(w).Encode(resp)
 	case helpers.NoResultFound:
 		errObj := Error{
 			Message:   er.Error(),
