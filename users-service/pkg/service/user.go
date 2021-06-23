@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	UserExpirationTime = time.Minute * 1
+	UserExpirationTime = time.Minute * 10
 )
 
 type UserInterface interface {
