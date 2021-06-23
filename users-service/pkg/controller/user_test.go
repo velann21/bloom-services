@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/velann21/bloom-services/common-lib/entities/requests"
 	"github.com/velann21/bloom-services/common-lib/helpers"
+	"github.com/velann21/bloom-services/common-lib/server"
 	"github.com/velann21/bloom-services/users-service/pkg/entities/models"
 	"github.com/velann21/bloom-services/users-service/pkg/service"
 	"math/rand"
@@ -92,7 +93,7 @@ func (service MockUserService) UpdateUserWithPessimisticLock(ctx context.Context
 }
 
 func MockRouter(userService service.UserInterface) *mux.Router {
-	router := mux.NewRouter()
+	router := server.NewMux()
 	userRoutes := router.PathPrefix("/users/api/v1").Subrouter()
 	controller := NewUserController(userService)
 	userRoutes.Path("/user").HandlerFunc(controller.GetUser).Methods("GET")
