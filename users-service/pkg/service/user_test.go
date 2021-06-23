@@ -187,6 +187,9 @@ type MockUserRepository struct {
 	expectedResultType string
 }
 
+func (repo MockUserRepository) SubscribeForKeyExpireChannel(ctx context.Context, eventStream chan string, errChan chan error) {
+}
+
 func (repo MockUserRepository) DeleteUserLock(ctx context.Context, key string) error {
 	return nil
 }
