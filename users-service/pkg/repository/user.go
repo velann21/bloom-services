@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/velann21/bloom-services/common-lib/databases"
@@ -13,7 +12,6 @@ import (
 const (
 	LockPrefix       = "lock."
 	LockExpiry       = time.Minute * 5
-	LockExistMessage = "Update after "
 )
 
 type UserRepoInterface interface {
@@ -70,7 +68,8 @@ func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, k
 
 	if res.Val() == false {
 		ttl, _ := userRepo.redisClient.GetTTL(ctx, lockKey)
-		return errors.New(LockExistMessage + ttl.String())
+		logrus.Debug("Lock Exist with TTL ",ttl)
+		return helpers.TryLater
 	}
 
 	pipe := userRepo.redisClient.Begin()
@@ -141,7 +140,8 @@ func (userRepo UserRepo) GetUserLock(ctx context.Context, key string) error {
 
 	if res.Val() == false {
 		ttl, _ := userRepo.redisClient.GetTTL(ctx, lockKey)
-		return errors.New(LockExistMessage + ttl.String())
+		logrus.Debug("Lock Exist with TTL ",ttl)
+		return helpers.TryLater
 	}
 	return nil
 }
