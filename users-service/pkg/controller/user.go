@@ -26,7 +26,7 @@ func (user User) CreateUser(resp http.ResponseWriter, req *http.Request) {
 	successResponse := userResponse.Response{Success: commonSuccessResponse}
 	errorResponse := response.NewErrorResponse()
 	userEntity := requests.NewUserEntity()
-	ctx, cancel := context.WithTimeout(req.Context(), time.Second*30)
+	ctx, cancel := context.WithTimeout(req.Context(), time.Second*5)
 	defer cancel()
 
 	err := userEntity.PopulateUser(req.Body)
@@ -62,7 +62,7 @@ func (user User) UpdateUserWithOptimisticLock(resp http.ResponseWriter, req *htt
 	successResponse := userResponse.Response{Success: commonSuccessResponse}
 	errorResponse := response.NewErrorResponse()
 	userEntity := requests.NewUserEntity()
-	ctx, cancel := context.WithTimeout(req.Context(), time.Second*30)
+	ctx, cancel := context.WithTimeout(req.Context(), time.Second*5)
 	defer cancel()
 
 	err := userEntity.PopulateUser(req.Body)
@@ -97,7 +97,7 @@ func (user User) UpdateUserWithPessimisticLock(resp http.ResponseWriter, req *ht
 	successResponse := userResponse.Response{Success: commonSuccessResponse}
 	errorResponse := response.NewErrorResponse()
 	userEntity := requests.NewUserEntity()
-	ctx, cancel := context.WithTimeout(req.Context(), time.Second*30)
+	ctx, cancel := context.WithTimeout(req.Context(), time.Second*5)
 	defer cancel()
 
 	err := userEntity.PopulateUser(req.Body)
@@ -130,7 +130,7 @@ func (user User) GetUser(resp http.ResponseWriter, req *http.Request) {
 	errorResponse := response.NewErrorResponse()
 	commonSuccessResponse := response.NewSuccessResponse()
 	successResponse := userResponse.Response{Success: commonSuccessResponse}
-	ctx, cancel := context.WithTimeout(req.Context(), time.Second*30)
+	ctx, cancel := context.WithTimeout(req.Context(), time.Second*5)
 	defer cancel()
 
 	emailID := req.URL.Query().Get("email")
