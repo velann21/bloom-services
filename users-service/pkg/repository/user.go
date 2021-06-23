@@ -115,12 +115,12 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 	return nil
 }
 
-func (userRepo UserRepo) SubscribeForKeyExpireChannel(ctx context.Context, eventStream chan string, errChan chan error){
+func (userRepo UserRepo) SubscribeForKeyExpireChannel(ctx context.Context, eventStream chan string, errChan chan error) {
 	stream := userRepo.redisClient.Subscribe(ctx, "__keyevent@0__:expired")
 	for {
 		logrus.Info("Start Listening for message")
 		msg, err := stream.ReceiveMessage(ctx)
-		if err != nil{
+		if err != nil {
 			logrus.WithError(err).Error("Error while ReceiveMessage for event key expired")
 			errChan <- err
 		}

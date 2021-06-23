@@ -59,6 +59,10 @@ type MockUserService struct {
 	expectedOutput string
 }
 
+func (service MockUserService) UserExpiredEvent(ctx context.Context, eventStream chan string, errChan chan error) {
+
+}
+
 func NewMockUserService(expectedOutput string) *MockUserService {
 	return &MockUserService{expectedOutput: expectedOutput}
 }
