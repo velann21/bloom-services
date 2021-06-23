@@ -65,6 +65,7 @@ func (users UserService) GetUser(ctx context.Context, email string) (*models.Use
 		return nil, err
 	}
 	if result == nil {
+		// Todo: Check in the file system if not available then return the No Result Found
 		return nil, helpers.NoResultFound
 	}
 	userModel := &models.User{}
@@ -72,6 +73,7 @@ func (users UserService) GetUser(ctx context.Context, email string) (*models.Use
 	if err != nil {
 		return nil, err
 	}
+
 	logrus.Debug("Completed the GetUser Service")
 	return userModel, nil
 }
