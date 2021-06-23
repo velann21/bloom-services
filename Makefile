@@ -4,6 +4,9 @@ vendor_bloom_user_service:
 vendor_bloom_common_lib:
 	cd ./go-common-lib && go mod vendor
 
+run_bloom_user_service_local:vendor_bloom_user_service
+	cd ./users-service && go run main.go
+
 build_bloom_user_service:vendor_bloom_user_service
 	cd ./users-service && docker build . -t bloom_user_service:$(tag) && docker tag  bloom_user_service:$(tag) singaravelan21/bloom_user_service:$(tag)
 
