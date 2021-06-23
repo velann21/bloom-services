@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func Server(ctx context.Context, router *mux.Router, port string) {
+func Server(ctx context.Context, router *mux.Router, port string, close chan bool) {
 	srv := &http.Server{
 		Addr:    port,
 		Handler: router,
@@ -22,6 +22,7 @@ func Server(ctx context.Context, router *mux.Router, port string) {
 	logrus.Info("Server Started")
 	<-ctx.Done()
 	logrus.Info("Server Stopped")
+	close <- true
 
 	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer func() {

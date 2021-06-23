@@ -7,6 +7,7 @@ import (
 	"github.com/velann21/bloom-services/common-lib/server"
 	"github.com/velann21/bloom-services/users-service/pkg/database"
 	"github.com/velann21/bloom-services/users-service/pkg/routes"
+	"github.com/velann21/bloom-services/users-service/pkg/workers"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,6 +23,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	closeEvent := make(chan bool)
+	worker := workers.NewWorker(rc.Client)
+	go worker.ExpiredUserListener(closeEvent)
+
 	muxRoutes := server.NewMux()
 	indexRoutes := muxRoutes.PathPrefix("/user/").Subrouter()
 	usersRoutes := muxRoutes.PathPrefix("/users/api/v1").Subrouter()
@@ -34,6 +39,6 @@ func main() {
 		logrus.Info(osSignal)
 		cancel()
 	}()
-	server.Server(ctx, muxRoutes, ":5000")
+	server.Server(ctx, muxRoutes, ":5000", closeEvent)
 }
 

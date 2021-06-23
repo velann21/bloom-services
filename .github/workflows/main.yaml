@@ -18,6 +18,9 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Build & Push Custom Redis
+        run:  make push_custom_redis
+
       - name: Build & Push Docker Image
         run: make tag=${GITHUB_SHA::8} push_bloom_user_service
 

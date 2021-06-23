@@ -27,6 +27,8 @@ type Cache interface {
 	PipelineGetTTL(pipe redisV8.Pipeliner, ctx context.Context, key string) (time.Duration, error)
 	PipelineSetTTL(pipe redisV8.Pipeliner, ctx context.Context, key string, value interface{}, expiration time.Duration) (string, error)
 	PipelineDelete(pipe redisV8.Pipeliner, ctx context.Context, key string) (*redisV8.IntCmd, error)
+	PubSubChannels(ctx context.Context, pattern string)([]string, error)
+	Subscribe(ctx context.Context, channel string)*redisV8.PubSub
 }
 
 type Redis struct {
@@ -230,4 +232,9 @@ func (redis Redis) PubSubChannels(ctx context.Context, pattern string)([]string,
 		return nil, output.Err()
 	}
 	return output.Val(), nil
+}
+
+func (redis Redis) Subscribe(ctx context.Context, channel string)*redisV8.PubSub{
+	stream := redis.Client.Subscribe(ctx, channel)
+	return stream
 }
