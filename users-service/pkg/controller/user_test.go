@@ -3,10 +3,10 @@ package controller
 import (
 	"bytes"
 	"context"
-	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/velann21/bloom-services/common-lib/entities/requests"
 	"github.com/velann21/bloom-services/common-lib/helpers"
+	"github.com/velann21/bloom-services/common-lib/server"
 	"github.com/velann21/bloom-services/users-service/pkg/entities/models"
 	"github.com/velann21/bloom-services/users-service/pkg/service"
 	"math/rand"
@@ -32,7 +32,7 @@ func TestUser_CreateUserController(t *testing.T) {
 	for _, test := range tests {
 		request, _ := http.NewRequest(http.MethodPost, "/users/api/v1/user", strings.NewReader(test.body))
 		response := httptest.NewRecorder()
-		MockRouter(NewMockUserService(test.serviceTYpe)).ServeHTTP(response, request)
+		MockRouter(NewMockUserService(test.serviceTYpe)).Router.ServeHTTP(response, request)
 		assert.Equal(t, response.Result().Status, test.expectedStatusCode)
 	}
 }
@@ -50,7 +50,7 @@ func TestUser_GetUserController(t *testing.T) {
 	for _, test := range tests {
 		request, _ := http.NewRequest(http.MethodGet, "/users/api/v1/user?email="+test.email, nil)
 		response := httptest.NewRecorder()
-		MockRouter(NewMockUserService(test.serviceTYpe)).ServeHTTP(response, request)
+		MockRouter(NewMockUserService(test.serviceTYpe)).Router.ServeHTTP(response, request)
 		assert.Equal(t, test.expectedStatusCode, response.Result().Status)
 	}
 }
@@ -91,15 +91,16 @@ func (service MockUserService) UpdateUserWithPessimisticLock(ctx context.Context
 	return nil
 }
 
-func MockRouter(userService service.UserInterface) *mux.Router {
-	router := mux.NewRouter()
+func MockRouter(userService service.UserInterface) *server.Router {
+	router := server.NewMux()
+	customRouter := server.NewRouter(router)
 	userRoutes := router.PathPrefix("/users/api/v1").Subrouter()
 	controller := NewUserController(userService)
 	userRoutes.Path("/user").HandlerFunc(controller.GetUser).Methods("GET")
 	userRoutes.Path("/user").HandlerFunc(controller.CreateUser).Methods("POST")
 	userRoutes.Path("/user/optimistic").HandlerFunc(controller.UpdateUserWithOptimisticLock).Methods("PUT")
 	userRoutes.Path("/user/pessimistic").HandlerFunc(controller.UpdateUserWithPessimisticLock).Methods("PUT")
-	return router
+	return customRouter
 }
 
 func ProcessUserRequestBody(Random Rand) string {

@@ -14,7 +14,6 @@ github.com/go-redis/redis/v8/internal/proto
 github.com/go-redis/redis/v8/internal/rand
 github.com/go-redis/redis/v8/internal/util
 # github.com/gorilla/mux v1.8.0
-## explicit
 github.com/gorilla/mux
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
