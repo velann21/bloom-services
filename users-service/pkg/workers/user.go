@@ -2,7 +2,7 @@ package workers
 
 import (
 	"context"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/velann21/bloom-services/common-lib/databases"
 	"github.com/velann21/bloom-services/users-service/pkg/repository"
 	"github.com/velann21/bloom-services/users-service/pkg/service"
@@ -22,8 +22,10 @@ func NewWorker(redisConnection *databases.Redis) *Workers {
 func (Workers *Workers) ExpiredUserListener(eventCloser chan bool) {
 	eventStream := make(chan string)
 	errorChan := make(chan error)
+
 	wg := sync.WaitGroup{}
 	wg.Add(2)
+
 	go func() {
 		defer wg.Done()
 		Workers.service.UserExpiredEvent(context.Background(), eventStream, errorChan)
@@ -35,22 +37,28 @@ func (Workers *Workers) ExpiredUserListener(eventCloser chan bool) {
 			select {
 			case data, ok := <-eventStream:
 				if !ok {
+					logrus.Info("Channel eventStream closed")
 					eventStream = nil
 				}
-				fmt.Println(data)
+				logrus.Info(data)
 			case err, ok := <-errorChan:
 				if !ok {
+					logrus.Info("Channel errorChan closed")
 					errorChan = nil
 				}
-				fmt.Println(err)
+				logrus.Info(err)
 			case _, ok := <-eventCloser:
 				if !ok {
-					errorChan = nil
+					logrus.Info("Channel eventCloser closed")
+					eventCloser = nil
 				}
+				logrus.Info("eventCloser")
 				close(eventStream)
 				close(errorChan)
+				close(eventCloser)
 			}
 		}
 	}()
+
 	wg.Wait()
 }
