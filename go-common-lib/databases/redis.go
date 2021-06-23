@@ -27,8 +27,8 @@ type Cache interface {
 	PipelineGetTTL(pipe redisV8.Pipeliner, ctx context.Context, key string) (time.Duration, error)
 	PipelineSetTTL(pipe redisV8.Pipeliner, ctx context.Context, key string, value interface{}, expiration time.Duration) (string, error)
 	PipelineDelete(pipe redisV8.Pipeliner, ctx context.Context, key string) (*redisV8.IntCmd, error)
-	PubSubChannels(ctx context.Context, pattern string)([]string, error)
-	Subscribe(ctx context.Context, channel string)*redisV8.PubSub
+	PubSubChannels(ctx context.Context, pattern string) ([]string, error)
+	Subscribe(ctx context.Context, channel string) *redisV8.PubSub
 }
 
 type Redis struct {
@@ -80,7 +80,7 @@ func (redis Redis) Set(ctx context.Context, key string, value interface{}) (stri
 func (redis Redis) SetWithTTL(ctx context.Context, key string, value interface{}, expiration time.Duration) (string, error) {
 	result := redis.Client.Set(ctx, key, value, expiration)
 	if result.Err() != nil {
-		return "",result.Err()
+		return "", result.Err()
 	}
 	return result.Val(), nil
 }
@@ -226,15 +226,15 @@ func (redis Redis) Delete(ctx context.Context, key string) error {
 	return nil
 }
 
-func (redis Redis) PubSubChannels(ctx context.Context, pattern string)([]string, error){
+func (redis Redis) PubSubChannels(ctx context.Context, pattern string) ([]string, error) {
 	output := redis.Client.PubSubChannels(ctx, pattern)
-	if output.Err() != nil{
+	if output.Err() != nil {
 		return nil, output.Err()
 	}
 	return output.Val(), nil
 }
 
-func (redis Redis) Subscribe(ctx context.Context, channel string)*redisV8.PubSub{
+func (redis Redis) Subscribe(ctx context.Context, channel string) *redisV8.PubSub {
 	stream := redis.Client.Subscribe(ctx, channel)
 	return stream
 }

@@ -122,7 +122,7 @@ func (users UserService) UpdateUserWithOptimisticLock(ctx context.Context, data 
 	return nil
 }
 
-func (users UserService) UserExpiredEvent(ctx context.Context, eventStream chan string, errChan chan error){
+func (users UserService) UserExpiredEvent(ctx context.Context, eventStream chan string, errChan chan error) {
 	users.userRepo.SubscribeForKeyExpireChannel(ctx, eventStream, errChan)
 }
 

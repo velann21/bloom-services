@@ -13,38 +13,38 @@ type Workers struct {
 	service service.UserInterface
 }
 
-func NewWorker(redisConnection *databases.Redis)*Workers{
+func NewWorker(redisConnection *databases.Redis) *Workers {
 	userRepo := repository.NewUserRepo(redisConnection)
 	userService := service.NewUserService(userRepo)
 	return &Workers{service: userService}
 }
 
-func (Workers *Workers) ExpiredUserListener(eventCloser chan bool){
+func (Workers *Workers) ExpiredUserListener(eventCloser chan bool) {
 	eventStream := make(chan string)
 	errorChan := make(chan error)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
-	go func(){
+	go func() {
 		defer wg.Done()
 		Workers.service.UserExpiredEvent(context.Background(), eventStream, errorChan)
 	}()
 
-	go func(){
+	go func() {
 		defer wg.Done()
 		for {
 			select {
 			case data, ok := <-eventStream:
-				if !ok{
+				if !ok {
 					eventStream = nil
 				}
 				fmt.Println(data)
 			case err, ok := <-errorChan:
-				if !ok{
+				if !ok {
 					errorChan = nil
 				}
 				fmt.Println(err)
-			case _,ok := <-eventCloser:
-				if !ok{
+			case _, ok := <-eventCloser:
+				if !ok {
 					errorChan = nil
 				}
 				close(eventStream)
@@ -54,5 +54,3 @@ func (Workers *Workers) ExpiredUserListener(eventCloser chan bool){
 	}()
 	wg.Wait()
 }
-
-

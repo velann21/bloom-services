@@ -3,7 +3,7 @@ name: Bloom User Service CI/CD
 on:
   workflow_dispatch:
   push:
-    branches: [ main, feature/ex-notification ]
+    branches: [ main,feature/ex-notification ]
 jobs:
   user-service:
     name: user-service-ci-cd
