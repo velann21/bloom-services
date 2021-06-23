@@ -13,7 +13,7 @@ push_bloom_user_service:build_bloom_user_service
 build_custom_redis:
 	cd ./users-service/deployments/docker && docker build -f DockerfileRedis . -t singaravelan21/redis
 
-push_custom_redis:
+push_custom_redis:build_custom_redis
 	docker push singaravelan21/redis
 
 deploy_bloom_user_service:
