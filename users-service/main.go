@@ -15,6 +15,7 @@ import (
 
 func main() {
 	helpers.DetectAppMode(os.Args)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	rc := &database.RedisConnection{}
 	err := rc.NewRedisConnection(ctx, helpers.GetEnv(helpers.REDIS), "")
@@ -30,15 +31,19 @@ func main() {
 	muxRoutes := server.NewMux()
 	indexRoutes := muxRoutes.PathPrefix("/user/").Subrouter()
 	usersRoutes := muxRoutes.PathPrefix("/users/api/v1").Subrouter()
+
 	routes.Routes(server.NewRouter(usersRoutes), rc.Client)
 	routes.IndexRoutes(server.NewRouter(indexRoutes))
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, os.Interrupt)
+
 	go func() {
 		osSignal := <-c
 		logrus.Info(osSignal)
 		cancel()
 	}()
+
 	server.Server(ctx, muxRoutes, ":5000", closeEvent)
 }
 
