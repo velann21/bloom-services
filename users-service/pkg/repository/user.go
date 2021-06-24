@@ -107,7 +107,7 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 			return err
 		}
 		// TODO: Add retry mechanism here
-		return err
+		return helpers.NoResultFound
 	}
 
 	logrus.Debug("Completed the UpdateUserWithOptimisticLocking Repository func")
@@ -123,7 +123,7 @@ func (userRepo UserRepo) SubscribeForKeyExpireChannel(ctx context.Context, event
 			logrus.WithError(err).Error("Error while ReceiveMessage for event key expired")
 			errChan <- err
 		}
-		logrus.Info("Event Recieved")
+		logrus.Info("Event Received")
 		eventStream <- msg.String()
 	}
 }
