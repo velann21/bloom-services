@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -148,7 +147,7 @@ func Test_UserService_UpdateUserWithPessimisticLockIntegration(t *testing.T) {
 		err      error
 		lock     bool
 	}{
-		{lock: true, ctx: context.Background(), requests: &requests.User{Name: "velan", Email: "velann21@gmail.com", Address: requests.Address{ZipCode: "1096GJ", StreetName: "Piterberge", HouseNumber: 74}, DOB: requests.DOB{Day: 21, Year: 1992, Month: 10}}, err: errors.New("Update after ")},
+		{lock: true, ctx: context.Background(), requests: &requests.User{Name: "velan", Email: "velann21@gmail.com", Address: requests.Address{ZipCode: "1096GJ", StreetName: "Piterberge", HouseNumber: 74}, DOB: requests.DOB{Day: 21, Year: 1992, Month: 10}}, err: helpers.TryLater},
 		{lock: false, ctx: context.Background(), requests: &requests.User{Name: "velan", Email: "velann21@gmail.com", Address: requests.Address{ZipCode: "1096GJ", StreetName: "Piterberge", HouseNumber: 74}, DOB: requests.DOB{Day: 21, Year: 1992, Month: 10}}, err: nil},
 	}
 	for _, test := range tests {

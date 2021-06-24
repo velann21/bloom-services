@@ -15,7 +15,7 @@ type Cache interface {
 	Begin() redisV8.Pipeliner
 	Commit(ctx context.Context, pipe redisV8.Pipeliner) ([]redisV8.Cmder, error)
 	Watch(ctx context.Context, txFunc func(tx *redisV8.Tx) error, key string) error
-	GetTransactionFunc(ctx context.Context, key string, value []byte, expiration time.Duration) func(tx *redisV8.Tx) error
+	RunTransactionFunc(ctx context.Context, key string, value []byte, expiration time.Duration) func(tx *redisV8.Tx) error
 	GetExpireTime(ctx context.Context, key string) (time.Duration, error)
 	SetNX(ctx context.Context, key string, value []byte, expiration time.Duration) (*redisV8.BoolCmd, error)
 	GetSet(ctx context.Context, key string, value []byte) ([]byte, error)
@@ -106,7 +106,7 @@ func (redis Redis) Watch(ctx context.Context, txFunc func(tx *redisV8.Tx) error,
 	return nil
 }
 
-func (redis Redis) GetTransactionFunc(ctx context.Context, key string, value []byte, expiration time.Duration) func(tx *redisV8.Tx) error {
+func (redis Redis) RunTransactionFunc(ctx context.Context, key string, value []byte, expiration time.Duration) func(tx *redisV8.Tx) error {
 	txf := func(tx *redisV8.Tx) error {
 		_, err := tx.Get(ctx, key).Bytes()
 		if err != nil {
