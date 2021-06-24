@@ -92,6 +92,7 @@ func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, k
 		return err
 	}
 
+	// TODO: Check the transaction completed with delete commands if delete failed retry.
 	logrus.Debug("Inside the UpdateUserWithPessimisticLocking Repository func")
 	return nil
 }
@@ -100,7 +101,7 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 	logrus.Debug("Inside the UpdateUserWithOptimisticLocking Repository func")
 
 	err := userRepo.redisClient.Watch(ctx,
-		userRepo.redisClient.GetTransactionFunc(ctx, key, value, expiration),
+		userRepo.redisClient.RunTransactionFunc(ctx, key, value, expiration),
 		key)
 	if err != nil {
 		if err.Error() == helpers.RedisNil {
