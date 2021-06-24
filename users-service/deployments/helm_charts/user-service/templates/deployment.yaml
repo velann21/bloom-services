@@ -42,13 +42,13 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /user/health
+              path: /users/health
               port: 5000
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /user/health
+              path: /users/health
               port: 5000
             initialDelaySeconds: 5
             periodSeconds: 10

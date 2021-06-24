@@ -29,7 +29,7 @@ func main() {
 	go worker.ExpiredUserListener(closeEvent)
 
 	muxRoutes := server.NewMux()
-	indexRoutes := muxRoutes.PathPrefix("/user/").Subrouter()
+	indexRoutes := muxRoutes.PathPrefix("/users").Subrouter()
 	usersRoutes := muxRoutes.PathPrefix("/users/api/v1").Subrouter()
 
 	routes.Routes(server.NewRouter(usersRoutes), rc.Client)
