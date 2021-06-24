@@ -104,10 +104,11 @@ func (userRepo UserRepo) UpdateUserWithOptimisticLocking(ctx context.Context, ke
 		key)
 	if err != nil {
 		if err.Error() == helpers.RedisNil {
-			return err
+			return helpers.UserMayDeleted
 		}
 		// TODO: Add retry mechanism here
-		return helpers.NoResultFound
+		logrus.WithError(err).Debug("Transaction failed with error")
+		return helpers.ConflictUpdate
 	}
 
 	logrus.Debug("Completed the UpdateUserWithOptimisticLocking Repository func")
