@@ -19,7 +19,7 @@ func NewWorker(redisConnection *databases.Redis) *Workers {
 	return &Workers{service: userService}
 }
 
-func (Workers *Workers) ExpiredUserListener(eventCloser chan bool) {
+func (Workers Workers) ExpiredUserListener(eventCloser chan bool) {
 	eventStream := make(chan string)
 	errorChan := make(chan error)
 
