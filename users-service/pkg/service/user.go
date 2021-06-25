@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/velann21/bloom-services/common-lib/entities/requests"
 	"github.com/velann21/bloom-services/common-lib/helpers"
@@ -98,7 +99,12 @@ func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data
 		return err
 	}
 
-	err = users.userRepo.UpdateUserWithPessimisticLocking(ctx, data.Email, userModel, UserExpirationTime)
+
+	newUUID, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+	err = users.userRepo.UpdateUserWithPessimisticLocking(ctx, data.Email, userModel, newUUID.String(), UserExpirationTime)
 	if err != nil {
 		return err
 	}

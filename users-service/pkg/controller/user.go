@@ -97,7 +97,7 @@ func (user User) UpdateUserWithPessimisticLock(resp http.ResponseWriter, req *ht
 	successResponse := userResponse.Response{Success: commonSuccessResponse}
 	errorResponse := response.NewErrorResponse()
 	userEntity := requests.NewUserEntity()
-	ctx, cancel := context.WithTimeout(req.Context(), time.Second*5)
+	ctx, cancel := context.WithTimeout(req.Context(), time.Second*50)
 	defer cancel()
 
 	err := userEntity.PopulateUser(req.Body)
