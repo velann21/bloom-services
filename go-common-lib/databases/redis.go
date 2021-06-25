@@ -23,7 +23,7 @@ type Cache interface {
 	PipelineSet(pipe redisV8.Pipeliner, ctx context.Context, key string, value interface{}) (string, error)
 	PipelineGetSet(pipe redisV8.Pipeliner, ctx context.Context, key string, value []byte) ([]byte, error)
 	PipelineSetNX(pipe redisV8.Pipeliner, ctx context.Context, key string, value []byte, expiration time.Duration) (*redisV8.BoolCmd, error)
-	PipelineInjectScripts(pipe redisV8.Pipeliner, ctx context.Context, script string, keys []string, arg []byte)(interface{}, error)
+	PipelineInjectScripts(pipe redisV8.Pipeliner, ctx context.Context, script string, keys []string, arg []byte) (interface{}, error)
 	GetTTL(ctx context.Context, key string) (time.Duration, error)
 	PipelineGetTTL(pipe redisV8.Pipeliner, ctx context.Context, key string) (time.Duration, error)
 	PipelineSetTTL(pipe redisV8.Pipeliner, ctx context.Context, key string, value interface{}, expiration time.Duration) (string, error)
@@ -219,9 +219,9 @@ func (redis Redis) PipelineDelete(pipe redisV8.Pipeliner, ctx context.Context, k
 	return deleteResult, nil
 }
 
-func (redis Redis) PipelineInjectScripts(pipe redisV8.Pipeliner, ctx context.Context, script string, keys []string, arg []byte)(interface{}, error){
+func (redis Redis) PipelineInjectScripts(pipe redisV8.Pipeliner, ctx context.Context, script string, keys []string, arg []byte) (interface{}, error) {
 	output := pipe.Eval(ctx, script, keys, arg)
-	if output.Err() != nil{
+	if output.Err() != nil {
 		return nil, output.Err()
 	}
 	return output.Val(), nil

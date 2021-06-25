@@ -261,5 +261,24 @@ integration_test_bloom_user_service:
 
 ## How Pessimistic Lock Implemented:
 ```
-1. 
+1. Generate the new UUID
+2. Try SetNx if already lock present 
+   if it return 0,{
+     I send back error saying TryLater
+   }else{
+     Lock obtained with UUID generated, now start transactions
+     Within transaction I I passed the UUID so that our lock release opertion will be safer,
+     it won't release other clients lock.
+   }
+   
+3. Finally check whether all went in transaction without error and return success.
+```
+
+## How Optimistic Lock Implemented:
+```
+1. Here I made use of Redis watcher mechanism instead of versioning
+2. As soon as update call comes I will start watch the key which I should update
+3. Also will start the transaction for that key, Before the transaction if some other client 
+   updated the value for that key then it returns error with transaction failed/conflict
+4. Otherwise, trasaction will be completed.
 ```

@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	LockPrefix       = "lock."
-	LockExpiry       = time.Minute * 5
+	LockPrefix        = "lock."
+	LockExpiry        = time.Minute * 5
 	ReleaseLockScript = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end"
 )
 
@@ -69,7 +69,7 @@ func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, k
 
 	if res.Val() == false {
 		ttl, _ := userRepo.redisClient.GetTTL(ctx, lockKey)
-		logrus.Debug("Lock Exist with TTL ",ttl)
+		logrus.Debug("Lock Exist with TTL ", ttl)
 		return helpers.TryLater
 	}
 
@@ -93,9 +93,9 @@ func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, k
 		return err
 	}
 
-	for _, result := range execResult{
+	for _, result := range execResult {
 		logrus.Debug(result.String())
-		if result.Err() != nil{
+		if result.Err() != nil {
 			// Todo Add the errors in list and send it to client
 			logrus.WithError(result.Err()).Error("Partially failed ")
 		}
@@ -151,7 +151,7 @@ func (userRepo UserRepo) GetUserLock(ctx context.Context, key string) error {
 
 	if res.Val() == false {
 		ttl, _ := userRepo.redisClient.GetTTL(ctx, lockKey)
-		logrus.Debug("Lock Exist with TTL ",ttl)
+		logrus.Debug("Lock Exist with TTL ", ttl)
 		return helpers.TryLater
 	}
 	return nil

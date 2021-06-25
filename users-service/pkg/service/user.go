@@ -99,7 +99,6 @@ func (users UserService) UpdateUserWithPessimisticLock(ctx context.Context, data
 		return err
 	}
 
-
 	newUUID, err := uuid.NewUUID()
 	if err != nil {
 		return err
