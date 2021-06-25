@@ -221,7 +221,7 @@ func (repo MockUserRepository) GetUser(ctx context.Context, key string) ([]byte,
 func (repo MockUserRepository) UpdateUserWithOptimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error {
 	return nil
 }
-func (repo MockUserRepository) UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error {
+func (repo MockUserRepository) UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, uid string, expiration time.Duration) error {
 	return nil
 }
 func (repo MockUserRepository) GetUserLock(ctx context.Context, key string) error {

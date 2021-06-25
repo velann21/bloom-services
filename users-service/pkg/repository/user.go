@@ -12,13 +12,14 @@ import (
 const (
 	LockPrefix       = "lock."
 	LockExpiry       = time.Minute * 5
+	ReleaseLockScript = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end"
 )
 
 type UserRepoInterface interface {
 	CreateUser(ctx context.Context, key string, value []byte, expiration time.Duration) error
 	GetUser(ctx context.Context, key string) ([]byte, error)
 	UpdateUserWithOptimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error
-	UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error
+	UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, uid string, expiration time.Duration) error
 	GetUserLock(ctx context.Context, key string) error
 	DeleteUserLock(ctx context.Context, key string) error
 	SubscribeForKeyExpireChannel(ctx context.Context, eventStream chan string, errChan chan error)
@@ -56,12 +57,12 @@ func (userRepo UserRepo) GetUser(ctx context.Context, key string) ([]byte, error
 	return result, nil
 }
 
-func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, expiration time.Duration) error {
+func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, key string, value []byte, uid string, expiration time.Duration) error {
 	logrus.Debug("Inside the UpdateUserWithPessimisticLocking Repository func")
 
 	lockKey := fmt.Sprintf(LockPrefix + key)
 
-	res, err := userRepo.redisClient.SetNX(ctx, lockKey, nil, LockExpiry)
+	res, err := userRepo.redisClient.SetNX(ctx, lockKey, []byte(uid), LockExpiry)
 	if err != nil {
 		return err
 	}
@@ -80,16 +81,24 @@ func (userRepo UserRepo) UpdateUserWithPessimisticLocking(ctx context.Context, k
 		return err
 	}
 
-	_, err = userRepo.redisClient.PipelineDelete(pipe, ctx, lockKey)
+	_, err = userRepo.redisClient.PipelineInjectScripts(pipe, ctx, ReleaseLockScript, []string{lockKey}, []byte(uid))
 	if err != nil {
 		// TODO: Add the retry if required here
 		return err
 	}
 
-	_, err = userRepo.redisClient.Commit(ctx, pipe)
+	execResult, err := userRepo.redisClient.Commit(ctx, pipe)
 	if err != nil {
 		// TODO: Add the retry if required here
 		return err
+	}
+
+	for _, result := range execResult{
+		logrus.Debug(result.String())
+		if result.Err() != nil{
+			// Todo Add the errors in list and send it to client
+			logrus.WithError(result.Err()).Error("Partially failed ")
+		}
 	}
 
 	// TODO: Check the transaction completed with delete commands if delete failed retry.
